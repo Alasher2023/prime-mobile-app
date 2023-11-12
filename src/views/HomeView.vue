@@ -1,33 +1,31 @@
 <script setup lang="ts">
 import homeView from '@/components/layout/HomeLayout/homeLayout_index.vue'
-import Card from 'primevue/card';
-import Divider from 'primevue/divider';
+import Card from 'primevue/card'
+import Divider from 'primevue/divider'
 import combo_chart from '@/components/chart/comboChart.vue'
-import horizon_chart from '@/components/chart/HorizontalBarChart.vue'
-import doughnut_chart from '@/components/chart/doughnut Chart.vue'
+import horizontalbar_chart from '@/components/chart/HorizontalBarChart.vue'
+import doughnut_chart from '@/components/chart/doughnutChart.vue'
+import Toolbar from 'primevue/toolbar'
+import Button from 'primevue/button'
 </script>
 
 <template>
   <homeView>
     <template #default>
       <header>
-        <div class="grid grid-nogutter md:hidden">
-          <div class="col-12">
-            <div class="h-5rem text-center p-3 border-round-sm bg-primary font-bold">shopname</div>
-          </div>
-          <div class="col-12">
-            <div class="h-5rem text-center p-3 border-round-sm bg-blue-100 font-bold">datetime</div>
-          </div>
-          <div class="col-12">
-            <div class="h-5rem text-center p-3 border-round-sm bg-yellow-100 font-bold">diff</div>
+        <div class="md:hidden">
+          <div class="flex flex-row justify-content-between align-items-center px-3">
+            <div><Button label="Pre" /></div>
+            <div>2023.11.12</div>
+            <div><Button label="Next" /></div>
           </div>
         </div>
       </header>
 
       <main class="md:h-full">
-        <div class="grid">
+        <div class="grid grid-nogutter">
           <div class="col-12">
-            <div class="grid">
+            <div class="grid grid-nogutter">
               <div class="col-12 md:col-6">
                 <Card>
                   <template #header>
@@ -42,33 +40,31 @@ import doughnut_chart from '@/components/chart/doughnut Chart.vue'
                     <p class="mr-auto bg-green-100">sales</p>
                   </template>
                   <template #content>
-                      <p class="m-0 bg-bluegray-100">
-                          sales
-                      </p>
+                    <p class="m-0 bg-bluegray-100">sales</p>
                   </template>
-              </Card>
+                </Card>
               </div>
               <div class="col-12 md:col-6">
-                <div class="grid">
+                <div class="grid grid-nogutter">
                   <div class="col-12">
                     <Card>
-                  <template #title>
-                    <p class="mr-auto bg-yellow-100">chart1</p>
-                  </template>
-                  <template #content>
-                      <doughnut_chart/>
-                  </template>
-              </Card>
+                      <template #title>
+                        <p class="mr-auto bg-primary">chart in doughnut</p>
+                      </template>
+                      <template #content>
+                        <doughnut_chart />
+                      </template>
+                    </Card>
                   </div>
                   <div class="col-12">
                     <Card>
-                  <template #title>
-                    <p class="mr-auto bg-yellow-100">chart2</p>
-                  </template>
-                  <template #content>
-                    <horizon_chart/>
-                  </template>
-              </Card>
+                      <template #title>
+                        <p class="mr-auto bg-primary">chart in horizontalbar</p>
+                      </template>
+                      <template #content>
+                        <horizontalbar_chart />
+                      </template>
+                    </Card>
                   </div>
                 </div>
               </div>
@@ -76,13 +72,13 @@ import doughnut_chart from '@/components/chart/doughnut Chart.vue'
           </div>
           <div class="col-12">
             <Card>
-                  <!-- <template #title>
-                    <p class="mr-auto bg-yellow-100">chart1</p>
-                  </template> -->
-                  <template #content>
-                      <combo_chart/>
-                  </template>
-              </Card>
+              <template #title>
+                <p class="mr-auto bg-primary">chart in combo</p>
+              </template>
+              <template #content>
+                <combo_chart />
+              </template>
+            </Card>
           </div>
         </div>
       </main>

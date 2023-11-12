@@ -5,7 +5,8 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
 import { ref, onMounted } from "vue";
 import Chart from 'primevue/chart';
 
@@ -80,4 +81,5 @@ const setChartOptions = () => {
         }
     };
 }
+
 </script>
