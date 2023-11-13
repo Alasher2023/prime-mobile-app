@@ -82,27 +82,92 @@ function fncAddDate(value: number) {
           </div>
         </header>
 
-        <main class="md:h-full overflow-y-scroll flex-grow-1 p-2">
+        <main class="md:h-full overflow-y-scroll flex-grow-1 p-4">
           <div class="grid grid-nogutter">
             <div class="col-12">
               <div class="grid grid-nogutter">
                 <div class="col-12 md:col-6">
-                  <Card>
-                    <template #header>
-                      <p class="ml-auto bg-blue-100">sales</p>
-                    </template>
-                    <template #title>
-                      <p class="mr-auto bg-yellow-100">sales</p>
-                    </template>
-                    <template #subtitle>
-                      <p class="mr-auto bg-green-100">sales</p>
-                      <Divider></Divider>
-                      <p class="mr-auto bg-green-100">sales</p>
-                    </template>
-                    <template #content>
-                      <p class="m-0 bg-bluegray-100">sales</p>
-                    </template>
-                  </Card>
+                  <div class="grid grid-nogutter px-3">
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col-2 text-xs">
+                              Sales
+                            </div>
+                            <div class="col-10 text-3xl text-right">
+                              21,946,502
+                            </div>
+                          </div>
+                        </div>
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col"></div>
+                            <div class="col-4 text-xs text-left">
+                              Tax-Normal<br/>Tax-Light
+                            </div>
+                            <div class="col-7 text-xs text-right">
+                              19,207,757<br/>2,739,448
+                            </div>
+                          </div>
+                        </div>
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col-3 text-xs text-left">
+                              Price_Tuple<br/>Price_Guest
+                            </div>
+                            <div class="col-4 text-xs  text-right">
+                              18,034 Tuple<br/>21,522 Guest
+                            </div>
+                            <div class="col-5 text-xs  text-right">
+                              1,217<br/>1,020
+                            </div>
+                          </div>
+                        </div>
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col-3 text-xs text-left">
+                              BudgetRatios
+                            </div>
+                            <div class="col-4 text-xs text-right">
+                              93.0%
+                            </div>
+                            <div class="col-5 text-xs text-right">
+                              23,600,000
+                            </div>
+                          </div>
+                        </div>
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col-3 text-xs text-left">
+                              MonthRatios
+                            </div>
+                            <div class="col-4 text-xs text-right">
+                              107.9%
+                            </div>
+                            <div class="col-5 text-xs text-right">
+                              20,341,986
+                            </div>
+                          </div>
+                        </div>
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                        <div class="col-12">
+                          <div class="grid">
+                            <div class="col-3 text-xs text-left text-center">
+                              YearRatios
+                            </div>
+                            <div class="col-4 text-xs text-right">
+                              105.3%
+                            </div>
+                            <div class="col-5 text-xs text-right">
+                              20,840,274
+                            </div>
+                          </div>
+                        </div>                        
+                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
+                      </div>
                 </div>
                 <div class="col-12 md:col-6">
                   <div class="grid grid-nogutter">
