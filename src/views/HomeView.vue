@@ -6,25 +6,27 @@ import combo_chart from '@/components/chart/comboChart.vue'
 import horizontalbar_chart from '@/components/chart/HorizontalBarChart.vue'
 import doughnut_chart from '@/components/chart/doughnutChart.vue'
 import Button from 'primevue/button'
-import SelectButton from 'primevue/selectbutton';
-import Calendar from 'primevue/calendar';
+import SelectButton from 'primevue/selectbutton'
+import Calendar from 'primevue/calendar'
 
-import { ref,watch } from 'vue';
+import { ref, watch } from 'vue'
 
 const CalendarDate = ref(new Date())
-const SelectButtonValue = ref('Monthly');
-const SelectButtonOptions = ref(['Daily', 'Monthly']);
+const SelectButtonValue = ref('Monthly')
+const SelectButtonOptions = ref(['Daily', 'Monthly'])
 
 watch(SelectButtonValue, () => {
   CalendarDate.value = new Date(CalendarDate.value)
 })
 
-function fncAddDate(value:number){
+function fncAddDate(value: number) {
   let OldDate = new Date(CalendarDate.value)
-  let NewDate = SelectButtonValue.value == 'Monthly' ? new Date(OldDate.setMonth(OldDate.getMonth() + value)) : new Date(OldDate.setDate(OldDate.getDate() + value))
+  let NewDate =
+    SelectButtonValue.value == 'Monthly'
+      ? new Date(OldDate.setMonth(OldDate.getMonth() + value))
+      : new Date(OldDate.setDate(OldDate.getDate() + value))
   CalendarDate.value = NewDate
 }
-
 </script>
 
 <template>
@@ -35,31 +37,47 @@ function fncAddDate(value:number){
           <div class="md:hidden flex flex-column">
             <div class="text-center text-3xl font-bold">Title</div>
             <div class="flex flex-row justify-content-between align-items-center px-3">
-              <div><Button label="Pre"
-                :pt="{ 
-                    root: { class: 'h-1rem w-5rem focus:shadow-none' } 
-                }"
-                @click="fncAddDate(-1)"/></div>
               <div>
-                <Calendar v-model="CalendarDate" :dateFormat="SelectButtonValue == 'Daily'? 'yy年mm月dd日' : 'yy年mm月'" touchUI
-                :pt="{
-                  root: {class: 'w-10rem'},
-                  input: {class: 'border-none text-ms text-center'}
-                }" />
+                <Button
+                  label="Pre"
+                  :pt="{
+                    root: { class: 'h-1rem focus:shadow-none' }
+                  }"
+                  @click.stop="fncAddDate(-1)"
+                />
               </div>
-              <div><Button label="Next"
-                :pt="{ 
-                    root: { class: 'h-1rem w-5rem focus:shadow-none' } 
-                }"
-                @click="fncAddDate(1)"/></div>
+              <div>
+                <Calendar
+                  v-model="CalendarDate"
+                  :dateFormat="SelectButtonValue == 'Daily' ? 'yy年mm月dd日' : 'yy年mm月'"
+                  touchUI
+                  :pt="{
+                    root: { class: 'w-10rem' },
+                    input: { class: 'border-none text-ms text-center' }
+                  }"
+                />
+              </div>
+              <div>
+                <Button
+                  label="Next"
+                  :pt="{
+                    root: { class: 'h-1rem focus:shadow-none' }
+                  }"
+                  @click.stop="fncAddDate(1)"
+                />
+              </div>
             </div>
             <div class="align-self-center mt-3">
-              <SelectButton v-model="SelectButtonValue" :options="SelectButtonOptions" aria-labelledby="basic" 
-              :pt="{
-                    button: ({ context }) => ({
-                        class: 'h-1rem w-7rem focus:shadow-none'
-                    })
-                }"/>
+              <SelectButton
+                v-model="SelectButtonValue"
+                :options="SelectButtonOptions"
+                aria-labelledby="basic"
+                :pt="{
+                  button: ({ context }) => ({
+                    class: 'h-1rem w-7rem focus:shadow-none'
+                  })
+                }"
+              />
             </div>
           </div>
         </header>
