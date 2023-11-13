@@ -3,8 +3,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 // 按照惯例，组合式函数名以“use”开头
 export function useReportWindowSize() {
   // 被组合式函数封装和管理的状态
-  const width = ref(0)
-  const height = ref(0)
+  const width = ref()
+  const height = ref()
 
   // 组合式函数可以随时更改其状态。
   function reportWindowSize() {

@@ -5,7 +5,8 @@
     </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
+
 import { ref, onMounted } from "vue";
 import Chart from 'primevue/chart';
 
@@ -15,7 +16,7 @@ onMounted(() => {
 });
 
 const chartData = ref();
-const chartOptions = ref(null);
+const chartOptions = ref();
 
 const setChartData = () => {
     const documentStyle = getComputedStyle(document.body);
@@ -47,4 +48,6 @@ const setChartOptions = () => {
         }
     };
 };
+
+
 </script>
