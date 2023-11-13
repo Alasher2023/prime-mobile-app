@@ -43,7 +43,7 @@ function fncAddDate(value:number){
               <div>
                 <Calendar v-model="CalendarDate" :dateFormat="SelectButtonValue == 'Daily'? 'yy年mm月dd日' : 'yy年mm月'" touchUI
                 :pt="{
-                  root: {class: 'w-9rem'},
+                  root: {class: 'w-10rem'},
                   input: {class: 'border-none text-ms text-center'}
                 }" />
               </div>
