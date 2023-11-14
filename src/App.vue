@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { RouterView } from 'vue-router'
+import { inject } from 'vue'
+const axios: any = inject('axios')  // inject axios
+
 
 // 禁止IOS放大 Start
 window.onload = function () {
