@@ -8,8 +8,9 @@ import doughnut_chart from '@/components/chart/doughnutChart.vue'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import Calendar from 'primevue/calendar'
+import ApiService from '@/services/homeService'
 
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 
 const CalendarDate = ref(new Date())
 const SelectButtonValue = ref('Monthly')
@@ -27,6 +28,13 @@ function fncAddDate(value: number) {
       : new Date(OldDate.setDate(OldDate.getDate() + value))
   CalendarDate.value = NewDate
 }
+
+onMounted(() => {
+  ApiService.getSumDaily(1,1,47,20230501).then(res => {
+    console.log(res);
+  })
+})
+
 </script>
 
 <template>
