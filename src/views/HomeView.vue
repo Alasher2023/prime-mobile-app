@@ -8,22 +8,23 @@ import doughnut_chart from '@/components/chart/doughnutChart.vue'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import Calendar from 'primevue/calendar'
-import { ref, reactive, watch } from 'vue'
+import ApiService from '@/services/homeService'
+import { ref, reactive, watch, onMounted } from 'vue'
 
 interface SalesInfoInterface {
-  _Sales : Number,
-  _TaxNormal: Number,
-  _TaxReduced : Number,
-  _TupleNum : Number,
-  _TuplePrice : Number,
-  _GuestNum : Number,
-  _GuestPrice : Number,
-  _BudgetRatiosPercent : Number,
-  _BudgetRatiosPrice : Number,
-  _MonthRatiosPercent : Number,
-  _MonthRatiosPrice : Number,
-  _YearRatiosPercent: Number,
-  _YearRatiosPrice: Number
+  _Sales : Number|String,
+  _TaxNormal: Number|String,
+  _TaxReduced : Number|String,
+  _TupleNum : Number|String,
+  _TuplePrice : Number|String,
+  _GuestNum : Number|String,
+  _GuestPrice : Number|String,
+  _BudgetRatiosPercent : Number|String,
+  _BudgetRatiosPrice : Number|String,
+  _MonthRatiosPercent : Number|String,
+  _MonthRatiosPrice : Number|String,
+  _YearRatiosPercent: Number|String,
+  _YearRatiosPrice: Number|String
 }
 const SalesInfo = reactive<SalesInfoInterface>({
   _Sales : 0,
@@ -57,6 +58,25 @@ function fncAddDate(value: number) {
       : new Date(OldDate.setDate(OldDate.getDate() + value))
   CalendarDate.value = NewDate
 }
+
+onMounted(() => {
+  ApiService.getSumDaily(1,1,47,20230501).then(res => {
+    if(res.data.length > 0){
+      // const formatter = new Intl.NumberFormat('ja-JP', {
+      //   style: 'currency',
+      //   currency: 'JPY'
+      // });
+      const formatter = new Intl.NumberFormat('ja-JP')
+      SalesInfo._Sales = formatter.format(res.data[0]['g_amt_outtax'])
+      SalesInfo._TaxNormal = formatter.format(res.data[0]['tax1_g_amt_outtax'])
+      SalesInfo._TaxReduced = formatter.format(res.data[0]['tax2_g_amt_outtax'])
+      SalesInfo._TupleNum = formatter.format(res.data[0]['chk_cnt'])
+      SalesInfo._TuplePrice = formatter.format(Math.ceil(res.data[0]['chk_cnt'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']))
+      SalesInfo._GuestNum = formatter.format(res.data[0]['guest_num'])
+      SalesInfo._GuestPrice = formatter.format(Math.ceil(res.data[0]['guest_num'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['guest_num']))
+    }
+  })
+})
 
 
 </script>
