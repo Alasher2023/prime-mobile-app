@@ -1,8 +1,8 @@
 import apiClient from "@/Composables/request"
 
 enum OldSumDailyType {
-    "Month" = "1",
-    "Year" = "2"
+    "Month" = "0",
+    "Year" = "1"
 }
 
 
@@ -24,7 +24,7 @@ export async function getData(comp_cd: number, shop_type_cd: number, shop_cd: nu
         }
     
         const amtPlan = () => {
-            return apiClient.get(`/api/AmtPlan/GetAmtPlan/${comp_cd},${shop_type_cd},${shop_cd},${b_day}`)
+            return apiClient.get(`/api/SumDaily/GetAmtPlan/${comp_cd},${shop_type_cd},${shop_cd},${b_day}`)
         }
 
         // 定义一个空数组，用于存储多个异步请求的返回值
