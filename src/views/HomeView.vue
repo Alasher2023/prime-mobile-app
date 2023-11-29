@@ -8,7 +8,7 @@ import doughnut_chart from '@/components/chart/doughnutChart.vue'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import Calendar from 'primevue/calendar'
-import ApiService from '@/services/homeService'
+import { getData } from '@/services/homeService'
 import { ref, reactive, watch, onMounted } from 'vue'
 
 interface SalesInfoInterface {
@@ -60,22 +60,29 @@ function fncAddDate(value: number) {
 }
 
 onMounted(() => {
-  ApiService.getSumDaily(1,1,47,20230501).then(res => {
-    if(res.data.length > 0){
-      // const formatter = new Intl.NumberFormat('ja-JP', {
-      //   style: 'currency',
-      //   currency: 'JPY'
-      // });
-      const formatter = new Intl.NumberFormat('ja-JP')
-      SalesInfo._Sales = formatter.format(res.data[0]['g_amt_outtax'])
-      SalesInfo._TaxNormal = formatter.format(res.data[0]['tax1_g_amt_outtax'])
-      SalesInfo._TaxReduced = formatter.format(res.data[0]['tax2_g_amt_outtax'])
-      SalesInfo._TupleNum = formatter.format(res.data[0]['chk_cnt'])
-      SalesInfo._TuplePrice = formatter.format(Math.ceil(res.data[0]['chk_cnt'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']))
-      SalesInfo._GuestNum = formatter.format(res.data[0]['guest_num'])
-      SalesInfo._GuestPrice = formatter.format(Math.ceil(res.data[0]['guest_num'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['guest_num']))
-    }
-  })
+
+  let res = getData(1,1,47,20230501)
+  console.log(res)
+
+
+
+
+  // ApiService.getSumDaily(1,1,47,20230501).then(res => {
+  //   if(res.data.length > 0){
+  //     // const formatter = new Intl.NumberFormat('ja-JP', {
+  //     //   style: 'currency',
+  //     //   currency: 'JPY'
+  //     // });
+  //     const formatter = new Intl.NumberFormat('ja-JP')
+  //     SalesInfo._Sales = formatter.format(res.data[0]['g_amt_outtax'])
+  //     SalesInfo._TaxNormal = formatter.format(res.data[0]['tax1_g_amt_outtax'])
+  //     SalesInfo._TaxReduced = formatter.format(res.data[0]['tax2_g_amt_outtax'])
+  //     SalesInfo._TupleNum = formatter.format(res.data[0]['chk_cnt'])
+  //     SalesInfo._TuplePrice = formatter.format(Math.ceil(res.data[0]['chk_cnt'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']))
+  //     SalesInfo._GuestNum = formatter.format(res.data[0]['guest_num'])
+  //     SalesInfo._GuestPrice = formatter.format(Math.ceil(res.data[0]['guest_num'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['guest_num']))
+  //   }
+  // })
 })
 
 
