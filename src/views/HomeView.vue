@@ -8,46 +8,83 @@ import doughnut_chart from '@/components/chart/doughnutChart.vue'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import Calendar from 'primevue/calendar'
-import { getData } from '@/services/homeService'
 import { ref, reactive, watch, onMounted } from 'vue'
+import apiClient from '@/Composables/request'
+
+enum OldSumDailyType {
+  'Month' = '1',
+  'Year' = '2'
+}
+
+enum RequestType {
+  'Daily' = 1,
+  'Monthly' = 2
+}
 
 interface SalesInfoInterface {
-  _Sales : Number|String,
-  _TaxNormal: Number|String,
-  _TaxReduced : Number|String,
-  _TupleNum : Number|String,
-  _TuplePrice : Number|String,
-  _GuestNum : Number|String,
-  _GuestPrice : Number|String,
-  _BudgetRatiosPercent : Number|String,
-  _BudgetRatiosPrice : Number|String,
-  _MonthRatiosPercent : Number|String,
-  _MonthRatiosPrice : Number|String,
-  _YearRatiosPercent: Number|String,
-  _YearRatiosPrice: Number|String
+  _Sales: Number | String
+  _TaxNormal: Number | String
+  _TaxReduced: Number | String
+  _TupleNum: Number | String
+  _TuplePrice: Number | String
+  _GuestNum: Number | String
+  _GuestPrice: Number | String
+  _BudgetRatiosPercent: Number | String
+  _BudgetRatiosPrice: Number | String
+  _MonthRatiosPercent: Number | String
+  _MonthRatiosPrice: Number | String
+  _YearRatiosPercent: Number | String
+  _YearRatiosPrice: Number | String
 }
 const SalesInfo = reactive<SalesInfoInterface>({
-  _Sales : 0,
+  _Sales: 0,
   _TaxNormal: 0,
-  _TaxReduced : 0,
-  _TupleNum : 0,
-  _TuplePrice : 0,
-  _GuestNum : 0,
-  _GuestPrice : 0,
-  _BudgetRatiosPercent : 0,
-  _BudgetRatiosPrice : 0,
-  _MonthRatiosPercent : 0,
-  _MonthRatiosPrice : 0,
+  _TaxReduced: 0,
+  _TupleNum: 0,
+  _TuplePrice: 0,
+  _GuestNum: 0,
+  _GuestPrice: 0,
+  _BudgetRatiosPercent: 0,
+  _BudgetRatiosPrice: 0,
+  _MonthRatiosPercent: 0,
+  _MonthRatiosPrice: 0,
   _YearRatiosPercent: 0,
   _YearRatiosPrice: 0
 })
 const Title = ref()
 const CalendarDate = ref(new Date())
-const SelectButtonValue = ref('月')
+const SelectButtonValue = ref('日')
 const SelectButtonOptions = ref(['日', '月'])
+
+interface ChartDoughnutDataInterface {
+  chartlabel: Array<string>
+  chartvalue: Array<number>
+  chartcolor?: Array<string>
+}
+const ChartDoughnutData = reactive<ChartDoughnutDataInterface>({
+  chartlabel: [],
+  chartvalue: []
+})
+interface ChartComboDataInterface {
+  lables: Array<string>
+  linelable: String
+  linevalue: Array<number>
+  barlable: String
+  barvalue: Array<number>
+}
+const ChartComboData = reactive<ChartComboDataInterface>({
+  lables: [],
+  linelable: '',
+  linevalue: [],
+  barlable: '',
+  barvalue: []
+})
 
 watch(SelectButtonValue, () => {
   CalendarDate.value = new Date(CalendarDate.value)
+  SelectButtonValue.value == '月'
+    ? getData(1, 1, 47, 20230501, RequestType.Monthly)
+    : getData(1, 1, 47, 20230501, RequestType.Daily)
 })
 
 function fncAddDate(value: number) {
@@ -59,33 +96,65 @@ function fncAddDate(value: number) {
   CalendarDate.value = NewDate
 }
 
+async function getData(
+  comp_cd: number,
+  shop_type_cd: number,
+  shop_cd: number,
+  b_day: number,
+  r_type: number
+) {
+  const Apis = [
+    `/api/SumDaily/GetSumDaily/${comp_cd},${shop_type_cd},${shop_cd},${b_day},${r_type}`,
+    `/api/SumDaily/GetOldSumDaily/${comp_cd},${shop_type_cd},${shop_cd},${b_day},${r_type},${OldSumDailyType.Month}`,
+    `/api/SumDaily/GetOldSumDaily/${comp_cd},${shop_type_cd},${shop_cd},${b_day},${r_type},${OldSumDailyType.Year}`,
+    `/api/SumDaily/GetAmtPlan/${comp_cd},${shop_type_cd},${shop_cd},${b_day},${r_type}`
+  ]
+
+  await Promise.all(Apis.map((Api) => apiClient.get(Api)))
+    .then((res) => {
+      let [SumDaily, OldSumDailyMonth, oldSumDailyYear, amtPlan] = res
+      const formatter = new Intl.NumberFormat('ja-JP')
+      SalesInfo._Sales = formatter.format(SumDaily.data[0]['g_amt_outtax'])
+      SalesInfo._TaxNormal = formatter.format(SumDaily.data[0]['tax1_g_amt_outtax'])
+      SalesInfo._TaxReduced = formatter.format(SumDaily.data[0]['tax2_g_amt_outtax'])
+      SalesInfo._TupleNum = formatter.format(SumDaily.data[0]['chk_cnt'])
+      SalesInfo._TuplePrice = formatter.format(
+        Math.ceil(
+          SumDaily.data[0]['chk_cnt'] == 0
+            ? 0
+            : SumDaily.data[0]['g_amt_outtax'] / SumDaily.data[0]['chk_cnt']
+        )
+      )
+      SalesInfo._GuestNum = formatter.format(SumDaily.data[0]['guest_num'])
+      SalesInfo._GuestPrice = formatter.format(
+        Math.ceil(
+          SumDaily.data[0]['guest_num'] == 0
+            ? 0
+            : SumDaily.data[0]['g_amt_outtax'] / SumDaily.data[0]['guest_num']
+        )
+      )
+      // SalesInfo._BudgetRatiosPercent =
+    })
+    .catch((err) => {
+      throw new Error(err)
+    })
+}
+
+function setChartData() {
+  ChartDoughnutData.chartlabel = ['A', 'B']
+  ChartDoughnutData.chartvalue = [540, 325]
+
+  ChartComboData.lables = ['January', 'February', 'March', 'April', 'May', 'June', 'July']
+  ChartComboData.linelable = 'Dataset 1'
+  ChartComboData.linevalue = [50, 25, 12, 48, 56, 76, 42]
+  ChartComboData.barlable = 'Dataset 2'
+  ChartComboData.barvalue = [21, 84, 24, 75, 37, 65, 34]
+}
+
 onMounted(() => {
-
-  let res = getData(1,1,47,20230501)
-  console.log(res)
-
-
-
-
-  // ApiService.getSumDaily(1,1,47,20230501).then(res => {
-  //   if(res.data.length > 0){
-  //     // const formatter = new Intl.NumberFormat('ja-JP', {
-  //     //   style: 'currency',
-  //     //   currency: 'JPY'
-  //     // });
-  //     const formatter = new Intl.NumberFormat('ja-JP')
-  //     SalesInfo._Sales = formatter.format(res.data[0]['g_amt_outtax'])
-  //     SalesInfo._TaxNormal = formatter.format(res.data[0]['tax1_g_amt_outtax'])
-  //     SalesInfo._TaxReduced = formatter.format(res.data[0]['tax2_g_amt_outtax'])
-  //     SalesInfo._TupleNum = formatter.format(res.data[0]['chk_cnt'])
-  //     SalesInfo._TuplePrice = formatter.format(Math.ceil(res.data[0]['chk_cnt'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']))
-  //     SalesInfo._GuestNum = formatter.format(res.data[0]['guest_num'])
-  //     SalesInfo._GuestPrice = formatter.format(Math.ceil(res.data[0]['guest_num'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['guest_num']))
-  //   }
-  // })
+  getData(1, 1, 47, 20230501, RequestType.Daily)
+  setChartData()
 })
-
-
 </script>
 
 <template>
@@ -98,7 +167,7 @@ onMounted(() => {
             <div class="flex flex-row justify-content-between align-items-center px-3">
               <div>
                 <Button
-                  :label="SelectButtonValue == '月'? '前月' : '前日'"
+                  :label="SelectButtonValue == '月' ? '前月' : '前日'"
                   :pt="{
                     root: { class: 'h-1rem focus:shadow-none' }
                   }"
@@ -118,7 +187,7 @@ onMounted(() => {
               </div>
               <div>
                 <Button
-                  :label="SelectButtonValue == '月'? '翌月' : '翌日'"
+                  :label="SelectButtonValue == '月' ? '翌月' : '翌日'"
                   :pt="{
                     root: { class: 'h-1rem focus:shadow-none' }
                   }"
@@ -147,86 +216,76 @@ onMounted(() => {
               <div class="grid grid-nogutter">
                 <div class="col-12 md:col-6">
                   <div class="grid grid-nogutter px-3">
-                        <div class="col-12">
-                          <div class="grid">
-                            <div class="col-2 text-xs">
-                              売上
-                            </div>
-                            <div class="col-10 text-3xl text-right -mb-3">
-                              {{ SalesInfo._Sales }} 円
-                            </div>
-                          </div>
+                    <div class="col-12">
+                      <div class="grid">
+                        <div class="col-2 text-xs">売上</div>
+                        <div class="col-10 text-3xl text-right -mb-3">
+                          {{ SalesInfo._Sales }} 円
                         </div>
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
-                        <div class="col-12  -mb-2">
-                          <div class="grid">
-                            <div class="col"></div>
-                            <div class="col-4 text-xs text-left">
-                              標準税率対象額<br/>軽減税率対象額
-                            </div>
-                            <div class="col-7 text-xs text-right">
-                              {{ SalesInfo._TaxNormal }} 円<br/>{{ SalesInfo._TaxReduced }} 円
-                            </div>
-                          </div>
-                        </div>
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
-                        <div class="col-12">
-                          <div class="grid -mb-2">
-                            <div class="col-3 text-xs text-left">
-                              組/単価<br/>客/単価
-                            </div>
-                            <div class="col-4 text-xs  text-right">
-                              {{ SalesInfo._TupleNum }} 組<br/>{{ SalesInfo._GuestNum }} 名
-                            </div>
-                            <div class="col-5 text-xs  text-right">
-                              {{ SalesInfo._TuplePrice }} 円<br/>{{ SalesInfo._GuestPrice }} 円
-                            </div>
-                          </div>
-                        </div>
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
-                        <div class="col-12">
-                          <div class="grid  -mb-2">
-                            <div class="col-3 text-xs text-left">
-                              予算比
-                            </div>
-                            <div class="col-4 text-xs text-right">
-                              {{ SalesInfo._BudgetRatiosPercent }} %
-                            </div>
-                            <div class="col-5 text-xs text-right">
-                              {{ SalesInfo._BudgetRatiosPrice }} 円
-                            </div>
-                          </div>
-                        </div>
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
-                        <div class="col-12">
-                          <div class="grid -mb-2">
-                            <div class="col-3 text-xs text-left">
-                              前月比
-                            </div>
-                            <div class="col-4 text-xs text-right">
-                              {{ SalesInfo._MonthRatiosPercent }} %
-                            </div>
-                            <div class="col-5 text-xs text-right">
-                              {{ SalesInfo._MonthRatiosPrice }} 円
-                            </div>
-                          </div>
-                        </div>
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
-                        <div class="col-12">
-                          <div class="grid -mb-2">
-                            <div class="col-3 text-xs text-left text-center">
-                              前年当月比
-                            </div>
-                            <div class="col-4 text-xs text-right">
-                              {{ SalesInfo._YearRatiosPercent }} %
-                            </div>
-                            <div class="col-5 text-xs text-right">
-                              {{ SalesInfo._YearRatiosPrice }} 円
-                            </div>
-                          </div>
-                        </div>                        
-                        <Divider :pt="{root:{class: 'my-1'}}"></Divider>
                       </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                    <div class="col-12 -mb-2">
+                      <div class="grid">
+                        <div class="col"></div>
+                        <div class="col-4 text-xs text-left">
+                          標準税率対象額<br />軽減税率対象額
+                        </div>
+                        <div class="col-7 text-xs text-right">
+                          {{ SalesInfo._TaxNormal }} 円<br />{{ SalesInfo._TaxReduced }} 円
+                        </div>
+                      </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                    <div class="col-12">
+                      <div class="grid -mb-2">
+                        <div class="col-3 text-xs text-left">組/単価<br />客/単価</div>
+                        <div class="col-4 text-xs text-right">
+                          {{ SalesInfo._TupleNum }} 組<br />{{ SalesInfo._GuestNum }} 名
+                        </div>
+                        <div class="col-5 text-xs text-right">
+                          {{ SalesInfo._TuplePrice }} 円<br />{{ SalesInfo._GuestPrice }} 円
+                        </div>
+                      </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                    <div class="col-12">
+                      <div class="grid -mb-2">
+                        <div class="col-3 text-xs text-left">予算比</div>
+                        <div class="col-4 text-xs text-right">
+                          {{ SalesInfo._BudgetRatiosPercent }} %
+                        </div>
+                        <div class="col-5 text-xs text-right">
+                          {{ SalesInfo._BudgetRatiosPrice }} 円
+                        </div>
+                      </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                    <div class="col-12">
+                      <div class="grid -mb-2">
+                        <div class="col-3 text-xs text-left">前月比</div>
+                        <div class="col-4 text-xs text-right">
+                          {{ SalesInfo._MonthRatiosPercent }} %
+                        </div>
+                        <div class="col-5 text-xs text-right">
+                          {{ SalesInfo._MonthRatiosPrice }} 円
+                        </div>
+                      </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                    <div class="col-12">
+                      <div class="grid -mb-2">
+                        <div class="col-3 text-xs text-left text-center">前年当月比</div>
+                        <div class="col-4 text-xs text-right">
+                          {{ SalesInfo._YearRatiosPercent }} %
+                        </div>
+                        <div class="col-5 text-xs text-right">
+                          {{ SalesInfo._YearRatiosPrice }} 円
+                        </div>
+                      </div>
+                    </div>
+                    <Divider :pt="{ root: { class: 'my-1' } }"></Divider>
+                  </div>
                 </div>
                 <div class="col-12 md:col-6">
                   <div class="grid grid-nogutter">
@@ -236,7 +295,10 @@ onMounted(() => {
                           <p class="mr-auto bg-primary">chart with doughnut</p>
                         </template>
                         <template #content>
-                          <doughnut_chart />
+                          <doughnut_chart
+                            :label="ChartDoughnutData.chartlabel"
+                            :value="ChartDoughnutData.chartvalue"
+                          />
                         </template>
                       </Card>
                     </div>
@@ -260,7 +322,13 @@ onMounted(() => {
                   <p class="mr-auto bg-primary">chart with combo</p>
                 </template>
                 <template #content>
-                  <combo_chart />
+                  <combo_chart
+                    :labels="ChartComboData.lables"
+                    :linelable="ChartComboData.linelable"
+                    :linevalue="ChartComboData.linevalue"
+                    :barlable="ChartComboData.barlable"
+                    :barvalue="ChartComboData.barvalue"
+                  />
                 </template>
               </Card>
             </div>

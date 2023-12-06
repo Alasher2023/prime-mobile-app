@@ -8,46 +8,60 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Chart from 'primevue/chart';
 
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
+// onMounted(() => {
+//     chartData.value = setChartData();
+//     chartOptions.value = setChartOptions();
+// });
+
 
 const chartData = ref();
 const chartOptions = ref();
+
+const props = defineProps({
+    labels : {type : Array<string>,requied : true},
+    linelable : {type : String ,requied : true},
+    linevalue : {type : Array<number>,requied : true},
+    barlable : {type : String ,requied : true},
+    barvalue : {type : Array<number>,requied : true},
+})
+
+watch(props,() => {
+    chartData.value = setChartData();
+    chartOptions.value = setChartOptions();
+})
         
 const setChartData = () => {
     const documentStyle = getComputedStyle(document.documentElement);
 
     return {
-        labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+        labels: props.labels,
         datasets: [
             {
                 type: 'line',
-                label: 'Dataset 1',
+                label: props.linelable,
                 borderColor: documentStyle.getPropertyValue('--blue-500'),
                 borderWidth: 2,
                 fill: false,
                 tension: 0.4,
-                data: [50, 25, 12, 48, 56, 76, 42]
+                data: props.linevalue
             },
             {
                 type: 'bar',
-                label: 'Dataset 2',
+                label: props.barlable,
                 backgroundColor: documentStyle.getPropertyValue('--green-500'),
-                data: [21, 84, 24, 75, 37, 65, 34],
+                data: props.barvalue,
                 borderColor: 'white',
                 borderWidth: 2
             },
-            {
-                type: 'bar',
-                label: 'Dataset 3',
-                backgroundColor: documentStyle.getPropertyValue('--orange-500'),
-                data: [41, 52, 24, 74, 23, 21, 32]
-            }
+            // {
+            //     type: 'bar',
+            //     label: 'Dataset 3',
+            //     backgroundColor: documentStyle.getPropertyValue('--orange-500'),
+            //     data: [41, 52, 24, 74, 23, 21, 32]
+            // }
         ]
     };
 };

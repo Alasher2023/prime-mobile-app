@@ -7,13 +7,24 @@
 
 <script setup lang="ts">
 
-import { ref, onMounted } from "vue";
+import { ref, onMounted, watch } from "vue";
 import Chart from 'primevue/chart';
 
-onMounted(() => {
+const props = defineProps({
+    label : {type : Array<string>,requied : true},
+    value : {type : Array<number>,requied : true},
+    color : {type : Array<string>}
+})
+
+watch(props,() => {
     chartData.value = setChartData();
     chartOptions.value = setChartOptions();
-});
+})
+
+// onMounted(() => {
+//     chartData.value = setChartData();
+//     chartOptions.value = setChartOptions();
+// });
 
 const chartData = ref();
 const chartOptions = ref();
@@ -22,10 +33,10 @@ const setChartData = () => {
     const documentStyle = getComputedStyle(document.body);
 
     return {
-        labels: ['A', 'B', 'C'],
+        labels: props.label,
         datasets: [
             {
-                data: [540, 325, 702],
+                data: props.value,
                 backgroundColor: [documentStyle.getPropertyValue('--blue-500'), documentStyle.getPropertyValue('--yellow-500'), documentStyle.getPropertyValue('--green-500')],
                 hoverBackgroundColor: [documentStyle.getPropertyValue('--blue-400'), documentStyle.getPropertyValue('--yellow-400'), documentStyle.getPropertyValue('--green-400')]
             }

@@ -13,6 +13,11 @@ const router = createRouter({
       name: 'login',
       component: () => import('@/views/LoginView.vue')
     },
+    {
+      path: '/SumDailyDtl',
+      name: 'SumDailyDtl',
+      component: () => import('@/views/SumDailyDtl/index.vue')
+    },
   ]
 })
 
