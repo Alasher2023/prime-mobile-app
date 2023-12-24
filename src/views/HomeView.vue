@@ -322,13 +322,13 @@ onMounted(() => {
                   <p class="mr-auto bg-primary">chart with combo</p>
                 </template>
                 <template #content>
-                  <combo_chart
+                  <!-- <combo_chart
                     :labels="ChartComboData.lables"
                     :linelable="ChartComboData.linelable"
                     :linevalue="ChartComboData.linevalue"
                     :barlable="ChartComboData.barlable"
                     :barvalue="ChartComboData.barvalue"
-                  />
+                  /> -->
                 </template>
               </Card>
             </div>

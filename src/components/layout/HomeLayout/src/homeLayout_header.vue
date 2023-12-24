@@ -1,25 +1,22 @@
 <template>
-  
   <div class="h-full">
     <Menubar :model="items">
-        <template #start>
-          <a class="text-xl font-normal border-none ">PrimeFlex</a>
-        </template>
-        <!-- 设置自定义图标 -->
-        <!-- <template #popupicon>
+      <template #start>
+        <a class="text-xl font-normal border-none">PrimeFlex</a>
+      </template>
+      <!-- 设置自定义图标 -->
+      <!-- <template #popupicon>
           <div class="mr-auto border-none">
             <i class="pi pi-bars"></i>
           </div>
         </template> -->
-      </Menubar>
+    </Menubar>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import Menubar from 'primevue/menubar'
-
-
 
 const items = ref([
   {
@@ -52,11 +49,11 @@ const items = ref([
         items: [
           {
             label: 'Apollo',
-            icon: 'pi pi-palette',
+            icon: 'pi pi-palette'
           },
           {
             label: 'Ultima',
-            icon: 'pi pi-palette',
+            icon: 'pi pi-palette'
           }
         ]
       }
@@ -64,13 +61,12 @@ const items = ref([
   },
   {
     label: 'Contact',
-    icon: 'pi pi-envelope',
+    icon: 'pi pi-envelope'
   }
 ])
 </script>
 
 <style scoped>
-
 @media screen and (max-width: 960px) {
   /* 固定位置 */
   /* :deep(.p-menubar) {
@@ -84,9 +80,8 @@ const items = ref([
 }
 /* 去除按钮阴影边框 */
 :deep(.p-menubar-button:focus) {
-    outline: 0 none;
-    outline-offset: 0;
-    box-shadow: none;
+  outline: 0 none;
+  outline-offset: 0;
+  box-shadow: none;
 }
-
 </style>

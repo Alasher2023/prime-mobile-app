@@ -23,15 +23,15 @@ window.onload = function () {
   document.addEventListener('gesturestart', function (event) {
     event.preventDefault()
   })
-  document.addEventListener(
-    'touchmove',
-    function (event) {
-      if (event.scale !== 1) {
-        event.preventDefault()
-      }
-    },
-    { passive: false }
-  )
+  // document.addEventListener(
+  //   'touchmove',
+  //   function (event: TouchEvent) {
+  //     if (event.scale !== 1) {
+  //       event.preventDefault()
+  //     }
+  //   },
+  //   { passive: false }
+  // )
 }
 // 禁止IOS放大 End
 </script>

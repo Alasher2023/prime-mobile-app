@@ -3,7 +3,7 @@ import 'primevue/resources/themes/lara-light-teal/theme.css'
 import 'primeicons/primeicons.css'
 import '../node_modules/primeflex/primeflex.css'
 
-import PrimeVue from 'primevue/config';
+import PrimeVue from 'primevue/config'
 
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'

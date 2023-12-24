@@ -1,85 +1,127 @@
-<template>
-  <div class="login-container">
-    <h1>Login</h1>
-    <form @submit="login">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" v-model="username" required>
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" v-model="password" required>
-      </div>
-      <button type="submit">Login</button>
-    </form>
-  </div>
-</template>
+<script setup lang="ts">
+import InputText from 'primevue/inputtext'
+import Password from 'primevue/password'
+import Card from 'primevue/card'
+import Button from 'primevue/button'
+import { reactive, ref } from 'vue'
+import * as Yup from 'yup'
+import router from '@/router'
+import apiClient from '@/Composables/request'
 
-<script>
-export default {
-  data() {
-    return {
-      username: '',
-      password: ''
-    };
-  },
-  methods: {
-    login(event) {
-      event.preventDefault();
-      // 调用登录接口，将username和password发送给服务器
-      // 可以使用axios等库发送网络请求
-      axios.post('/api/login', { username: this.username, password: this.password })
-        .then(response => {
-          // 登录成功，可以存储token等信息，跳转到首页
-          this.$router.push('/');
-        })
-        .catch(error => {
-          // 登录失败，可以显示错误信息
-          this.$message.error('Login failed');
-        });
-    }
+interface LoginValuesInterface {
+  userId: string
+  password: string
+}
+const LoginValues = reactive<LoginValuesInterface>({
+  userId: '',
+  password: ''
+})
+const errorMsg = ref('')
+
+const onsubmit = async () => {
+  await chkInputVal()
+  await doLogin()
+  if (errorMsg.value.trim().length === 0) {
+    console.log(errorMsg.value)
+    console.log('Success')
+  } else {
+    console.log('Error')
+    return false
   }
-};
+}
+
+const doLogin = async () => {
+  await apiClient
+    .get(`/api/SysMstUser/${LoginValues.userId}`)
+    .then((res) => {
+      if (res.data.length == 0) {
+        errorMsg.value = 'please check your userId'
+      } else {
+        if (res.data[0]['logiN_PASS'] != LoginValues.password) {
+          errorMsg.value = 'please check your password'
+        }
+      }
+    })
+    .catch((err) => {
+      console.log(err.message)
+    })
+}
+
+const chkInputVal = async () => {
+  const schema = Yup.object().shape({
+    userId: Yup.string().required('UserId is required'),
+    password: Yup.string().required('Password is required')
+  })
+  await schema
+    .validate(LoginValues, {
+      abortEarly: true
+    })
+    .then(() => {
+      errorMsg.value = ''
+      //使用vuerouter跳转画面
+      // router.push('/')
+    })
+    .catch((err: { errors: string[] }) => {
+      errorMsg.value = err.errors[0]
+      console.log(err.errors)
+    })
+}
 </script>
 
-<style scoped>
-.login-container {
-  text-align: center;
-  margin-top: 200px;
-}
-
-h1 {
-  font-size: 32px;
-  color: #333;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-label {
-  display: block;
-  font-size: 16px;
-  color: #555;
-}
-
-input {
-  padding: 10px;
-  width: 200px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-button {
-  padding: 10px 20px;
-  border-radius: 5px;
-  border: none;
-  background-color: #4c93ff;
-  color: #fff;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #3361ff;
-}
-</style>
+<template>
+  <form @submit.prevent="onsubmit">
+    <div class="flex w-full h-screen justify-content-center align-items-center">
+      <Card
+        :pt="{
+          title: {
+            class: 'text-center'
+          },
+          footer: {
+            class: 'text-center'
+          }
+        }"
+      >
+        <template #title> Login </template>
+        <template #content>
+          <div class="flex justify-content-center">
+            <div class="field grid">
+              <label for="UserId" class="col-fixed" style="width: 100px">UserId</label>
+              <div class="col">
+                <InputText
+                  v-model="LoginValues.userId"
+                  name="UserId"
+                  placeholder="UserId"
+                  :pt="{ root: { class: 'w-12rem' } }"
+                ></InputText>
+              </div>
+            </div>
+          </div>
+          <div class="flex justify-content-center">
+            <div class="field grid">
+              <label for="Password" class="col-fixed" style="width: 100px">Password</label>
+              <div class="col">
+                <Password
+                  v-model="LoginValues.password"
+                  name="Password"
+                  toggleMask
+                  :feedback="false"
+                  placeholder="Password"
+                  :pt="{ input: { class: 'w-12rem' } }"
+                ></Password>
+              </div>
+            </div>
+          </div>
+          <small class="text-danger">{{ errorMsg }}</small>
+        </template>
+        <template #footer>
+          <Button
+            type="submit"
+            label="Submit"
+            outlined
+            :pt="{ root: { class: 'w-12rem' } }"
+          ></Button>
+        </template>
+      </Card>
+    </div>
+  </form>
+</template>

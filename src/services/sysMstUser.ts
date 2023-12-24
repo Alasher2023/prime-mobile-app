@@ -1,10 +1,9 @@
-import http from './commonApi'
+// import http from './commonApi'
 
-class ApiService
-{
-    get(id: any): Promise<any> {
-        return http.get(`/api/SysMstUser/${id}`);
-    }
-}
+// class ApiService {
+//   get(id: any): Promise<any> {
+//     return http.get(`/api/SysMstUser/${id}`)
+//   }
+// }
 
-export default new ApiService();
+// export default new ApiService()
