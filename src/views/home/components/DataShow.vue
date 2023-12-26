@@ -9,7 +9,7 @@ const props = defineProps({
   searchInfo: { type: Object as () => searchInfoObject, requied: true }
 })
 
-function getData() {
+async function getData() {
   GetDataShow(props.searchInfo as searchInfoObject).then((res) => {
     // let [SumDaily, OldSumDailyMonth, oldSumDailyYear, amtPlan] = res
     const formatter = new Intl.NumberFormat('ja-JP')

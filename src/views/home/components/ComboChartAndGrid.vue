@@ -1,12 +1,9 @@
 <script setup lang="ts">
 import Card from 'primevue/card'
 import Chart from 'primevue/chart'
-import DataTable from './DataTable.vue'
 import { GetDataTableSalesAndGuests } from '@/api/home'
-import { onMounted, ref, watch } from 'vue'
-import { type searchInfoObject, type tableDataInterface} from '../index'
-import { object } from 'yup'
-
+import { ref, watch } from 'vue'
+import { type searchInfoObject } from '../index'
 
 /**
  * 通用
@@ -15,58 +12,68 @@ const props = defineProps({
   grid_header: { type: String, requied: true },
   searchInfo: { type: Object as () => searchInfoObject, requied: true }
 })
-onMounted(() => {
-    chartData.value = setChartData();
-    chartOptions.value = setChartOptions();
-});
-watch(props,() => {
+watch(props, () => {
   GetData()
 })
-function GetData() {
-  let temp_amt_data = []
-  let temp_guest_datat = []
-  GetDataTableSalesAndGuests(props.searchInfo as searchInfoObject).then((res) => {
-      
-    for(let i = 0;i < 23; i ++){
-        let key_amt = "time" + i.toString() + "_amt"
-        let key_guest = "time" + i.toString() + "_guest"
-        temp_amt_data.push(res.data[0][key_amt])
-        temp_guest_datat.push(res.data[0][key_guest])
+async function GetData() {
+  GetDataTableSalesAndGuests(props.searchInfo as searchInfoObject)
+    .then((res) => {
+      chartDs1.value = []
+      chartDs2.value = []
+      chartLabels.value = []
+      if(res.data.length == 0) return
+      for (let i = 0; i <= 23; i++) {
+        let key_amt = 'time' + i.toString() + '_amt'
+        let key_guest = 'time' + i.toString() + '_guest'
+        chartDs1.value.push(res.data[0][key_amt])
+        chartDs2.value.push(res.data[0][key_guest])
+        chartLabels.value.push(i)
       }
-    console.log(temp_amt_data)
-    console.log(temp_guest_datat)
-  }).catch(err => {
-    console.log(err)
-  })  
+      chartData.value = setChartData()
+      chartOptions.value = setChartOptions()
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
-
-/**
- * DataTable
- */
-const tableData = ref<tableDataInterface[]>()
 
 /**
  * Chart
  */
 const chartData = ref()
 const chartOptions = ref()
-const chartLabels = ref<Array<String>>()
-const chartDs = ref<Array<Object>>()
+const chartLabels = ref<Array<Object>>()
+const chartDs1 = ref<Array<Object>>()
+const chartDs2 = ref<Array<Object>>()
 
-const setChartData = async () => {
-    
+const setChartData = () => {
+  const documentStyle = getComputedStyle(document.documentElement)
+
+  return {
+    labels: chartLabels,
+    datasets: [
+      {
+        type: 'line',
+        label: '客数',
+        borderColor: documentStyle.getPropertyValue('--blue-500'),
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4,
+        yAxisID: 'y1',
+        data: chartDs2
+      },
+      {
+        type: 'bar',
+        label: '売上',
+        backgroundColor: documentStyle.getPropertyValue('--green-500'),
+        data: chartDs1,
+        borderColor: 'white',
+        borderWidth: 2,
+        yAxisID: 'y'
+      }
+    ]
+  }
 }
-
-
-
-// const setChartData = () => {
-
-//   return {
-//     labels: chartLabels,
-//     datasets: chartDs
-//   }
-
-// }
 const setChartOptions = () => {
   const documentStyle = getComputedStyle(document.documentElement)
   const textColor = documentStyle.getPropertyValue('--text-color')
@@ -79,12 +86,28 @@ const setChartOptions = () => {
     plugins: {
       legend: {
         labels: {
-          color: textColor
-        }
+          color: textColor,
+        },
       }
     },
     scales: {
       x: {
+        ticks: {
+          color: textColorSecondary,
+          autoSkip : false,
+          font: {
+            size : 9,
+            family : 'math'
+          }
+        },
+        grid: {
+          color: surfaceBorder
+        }
+      },
+      y: {
+        type: 'linear',
+        display: true,
+        position: 'left',
         ticks: {
           color: textColorSecondary
         },
@@ -92,14 +115,17 @@ const setChartOptions = () => {
           color: surfaceBorder
         }
       },
-      y: {
+      y1: {
+        type: 'linear',
+        display: true,
+        position: 'right',
         ticks: {
           color: textColorSecondary
         },
         grid: {
           color: surfaceBorder
         }
-      }
+      },
     }
   }
 }
@@ -115,9 +141,9 @@ const setChartOptions = () => {
         <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full mr-auto" />
       </div>
     </template>
-    <template #footer>
+    <!-- <template #footer>
       <DataTable :grid_header="props.grid_header"></DataTable>
-    </template>
+    </template> -->
   </Card>
 </template>
 ../indexType

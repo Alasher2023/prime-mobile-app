@@ -3,6 +3,7 @@
 import homeView from '@/components/layout/HomeLayout/homeLayout_index.vue'
 import datashow from './components/DataShow.vue'
 import combochart from './components/ComboChartAndGrid.vue'
+import doughtnutchart from './components/DoughnutChartAndGrid.vue'
 import Button from 'primevue/button'
 import SelectButton from 'primevue/selectbutton'
 import Calendar from 'primevue/calendar'
@@ -130,6 +131,7 @@ onMounted(() => {
                     </div>
                     <div class="col-12">
                       <!-- 饼图2 -->
+                      <doughtnutchart :search-info="s_info"></doughtnutchart>
                     </div>
                   </div>
                 </div>

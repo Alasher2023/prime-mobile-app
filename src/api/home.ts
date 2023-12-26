@@ -1,11 +1,6 @@
 import apiClient from '@/Composables/request'
 import { type searchInfoObject } from '@/views/home'
 
-enum OldSumDailyType {
-  'Month' = '1',
-  'Year' = '2'
-}
-
 //DataShow
 export const GetDataShow = async (params: searchInfoObject) => {
   return await apiClient.get(`/api/SumDaily/GetDataShow/${params.comp_cd},${params.shop_type_cd},${params.shop_cd},${params.b_day},${params.type}`)
