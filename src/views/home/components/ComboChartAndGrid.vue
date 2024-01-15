@@ -25,8 +25,8 @@ async function GetData() {
       for (let i = 0; i <= 23; i++) {
         let key_amt = 'time' + i.toString() + '_amt'
         let key_guest = 'time' + i.toString() + '_guest'
-        chartDs1.value.push(res.data[0][key_amt])
-        chartDs2.value.push(res.data[0][key_guest])
+        chartDs1.value.push(res.data[0].item[key_guest])
+        chartDs2.value.push(res.data[0].sales[key_amt])
         chartLabels.value.push(i)
       }
       chartData.value = setChartData()
@@ -134,16 +134,13 @@ const setChartOptions = () => {
 <template>
   <Card>
     <template #title>
-      <p class="mr-auto bg-primary">chart with combo</p>
+      <p class="mr-auto bg-primary">1時間帯別売上・客数</p>
     </template>
     <template #content>
       <div class="">
         <Chart type="bar" :data="chartData" :options="chartOptions" class="h-full mr-auto" />
       </div>
     </template>
-    <!-- <template #footer>
-      <DataTable :grid_header="props.grid_header"></DataTable>
-    </template> -->
   </Card>
 </template>
 ../indexType

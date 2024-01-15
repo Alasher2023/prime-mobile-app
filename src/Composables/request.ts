@@ -39,18 +39,18 @@ apiClient.interceptors.response.use(
         break
       case 401:
         //未登录
-        alert('未登录')
+        console.log('未登录')
         break
       case 403:
-        alert('无权限')
+        console.log('无权限')
         //无权限
         break
       case 404:
-        alert('接口不存在')
+        console.log('接口不存在')
         //接口不存在
         break
       default:
-        alert('未知错误')
+        console.log('未知错误')
         break
     }
 
