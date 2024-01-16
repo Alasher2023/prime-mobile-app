@@ -18,17 +18,24 @@ export type searchInfoObject = {
 }
 
 export type SalesInfoInterface = {
-  Sales: Number | String
-  TaxNormal: Number | String
-  TaxReduced: Number | String
-  TupleNum: Number | String
-  TuplePrice: Number | String
-  GuestNum: Number | String
-  GuestPrice: Number | String
-  BudgetRatiosPercent: Number | String
-  BudgetRatiosPrice: Number | String
-  MonthRatiosPercent: Number | String
-  MonthRatiosPrice: Number | String
-  YearRatiosPercent: Number | String
-  YearRatiosPrice: Number | String
+  Sales: number | string
+  TaxNormal: number | string
+  TaxReduced: number | string
+  TupleNum: number | string
+  TuplePrice: number | string
+  GuestNum: number | string
+  GuestPrice: number | string
+  BudgetRatiosPercent: number | string
+  BudgetRatiosPrice: number | string
+  MonthRatiosPercent: number | string
+  MonthRatiosPrice: number | string
+  YearRatiosPercent: number | string
+  YearRatiosPrice: number | string
+}
+
+export type datatableObject = {
+  name: string,
+  qty: number,
+  price : number,
+    
 }
