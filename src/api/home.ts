@@ -17,6 +17,10 @@ export const GetDataTableDepartmental =async (params:searchInfoObject) => {
     return await apiClient.get(`/api/SumDaily/GetDepartmental/${params.comp_cd},${params.shop_type_cd},${params.shop_cd},${params.b_day},${params.type}`)
 }
 
+export const GetDataTableDepartmentalTable =async (params:searchInfoObject,dept_cd:number) => {
+    return await apiClient.get(`/api/SumDaily/GetDepartmentalTable/${params.comp_cd},${params.shop_type_cd},${params.shop_cd},${params.b_day},${params.type},${dept_cd}`)
+}
+
 // グループ別
 export const GetDataTableGroup =async (params:searchInfoObject) => {
     return await apiClient.get(`/api/SumDaily/GetGroup/${params.comp_cd},${params.shop_type_cd},${params.shop_cd},${params.b_day},${params.type}`)

@@ -4,9 +4,9 @@ export interface baseDataInterface {
 }
 
 export interface tableDataInterface extends baseDataInterface {
-  sort: number
+  qty: number
   total: number
-  percent: number
+  percent: string
 }
 
 export type searchInfoObject = {
