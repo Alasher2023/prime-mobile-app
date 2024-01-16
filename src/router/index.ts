@@ -12,6 +12,11 @@ const router = createRouter({
       path: '/',
       name: 'home',
       component: () => import('@/views/home/index.vue')
+    },
+    {
+      path: '/shiftDraw',
+      name: 'shiftDraw',
+      component:() => import('@/views/shiftDraw/index.vue')
     }
   ]
 })
