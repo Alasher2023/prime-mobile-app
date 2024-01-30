@@ -1,112 +1,114 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, reactive } from 'vue'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
-import ColumnGroup from 'primevue/columngroup' // optional
-import Row from 'primevue/row' // optional
-import { string } from 'yup'
 
-const cData = [
-  {
-    name: 'liyang',
-    age: 36,
-    city: 'shanghai',
-    shifts: [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    showflg:true,
-    row: 1
-  },
-  {
-    name: 'liyang',
-    age: 36,
-    city: 'shanghai',
-    shifts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    showflg:true,
-    row: 2
-  },
-  {
-    name: 'liyang',
-    age: 36,
-    city: 'shanghai',
-    shifts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    showflg:false,
-    row: 3
-  },
-  {
-    name: 'lulv',
-    age: 26,
-    city: 'changshu',
-    shifts: [0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    showflg:true,
-    row: 1
-  },
-  {
-    name: 'lulv',
-    age: 26,
-    city: 'changshu',
-    shifts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    showflg:true,
-    row: 2
-  }
-]
+import { shiftTypeValue, type targetElementsObject } from './index'
+import cData from './data'
 
 const shiftData = ref()
 
 onMounted(() => {
   shiftData.value = cData
+  document.addEventListener('mouseup', () => {
+    if (targetElements.startIndex != -1) {
+      targetElements.endIndex =
+        targetElements.editedElementIndex[targetElements.editedElementIndex.length - 1]
+    }
+  })
 })
 
+const fncAddRow = () => {
+  shiftData.value.push({
+    name: 'lulv',
+    age: 26,
+    city: 'changshu',
+    shifts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    showflg: true,
+    row: 3
+  })
+}
+
+const fncDeleteRow = () => {
+  let row = shiftData.value.find(
+    (x: { row: number; name: string }) => x.row == 3 && x.name === 'lulv'
+  )
+  if (row === undefined) return false
+  let index = shiftData.value.indexOf(row)
+  shiftData.value.splice(index, 1)
+}
+
+const fncChangeRow = () => {
+  let row = shiftData.value.find(
+    (x: { row: number; name: string }) => x.row == 2 && x.name === 'liyang'
+  )
+  if (row === undefined) return false
+  let chgData = [2, 3, 4, 5]
+  for (const i of chgData) {
+    row.shifts[i] = shiftTypeValue.work
+  }
+}
+
+const fncDoInsert = () => {
+  let chgArray = shiftData.value.flatMap((el) => {
+    let oriRow = cData.find(x => x.name === el.name && x.row === el.row)
+    if(oriRow === undefined){
+      return el
+    }else{
+      // for(k = 0;k <= oriRow.shifts.length; k++){
+      //   if(oriRow.shifts[i] != el.shift[i]){
+      //     return el
+      //   }
+      // }
+    }
+  })
+  console.log(chgArray)
+}
 
 const drawType = ref(0)
-var arrShiftChg: (string | null)[] = []
-var arrEl:(HTMLElement)[] = []
-var recordFlg = false
-function onMouseDown(event:MouseEvent) {
-  recordFlg = true
-  arrShiftChg = []
-  let el = event.target as HTMLElement
-  let shiftIndex = el.getAttribute('shiftindex')
-//   el.style.marginTop = "1rem";
-//   arrEl.push(el)
-  arrShiftChg.push(shiftIndex)
-  
-}
 
-function onMouseMove(event:MouseEvent) {
-  if (!recordFlg) return false
-  let el = event.target as HTMLElement
-  let shiftIndex = el.getAttribute('shiftindex')
-//   el.style.marginTop = "1rem";
-  console.log(el.style.backgroundColor)
-  if (arrShiftChg.indexOf(shiftIndex) > -1){
-    // do nothing
-  }else{
-    arrShiftChg.push(shiftIndex)
-    // arrEl.push(el)
-    console.log(shiftIndex)
-  }
-}
+const targetElements = reactive<targetElementsObject>({
+  name: '',
+  row: -1,
+  startIndex: -1,
+  endIndex: -1,
+  editedElementIndex: []
+})
+watch(targetElements, () => {
+  if (targetElements.endIndex === -1) return false
 
-function onMouseUp(event:MouseEvent) {
-  recordFlg = false
-  let el = event.target as HTMLElement
-  let shiftIndex = el.getAttribute('shiftindex')
-  if (arrShiftChg.indexOf(shiftIndex) > -1){
-    // do nothing
-  }else{
-    arrShiftChg.push(shiftIndex)
-    arrEl.push(el)
+  let oriData = shiftData.value.find(
+    (x: { row: number; name: string }) =>
+      x.row == targetElements.row && x.name === targetElements.name
+  )
+  for (const i of targetElements.editedElementIndex) {
+    oriData.shifts[i] = drawType.value
   }
-  let shiftRow = el.getAttribute('rowIndex')
-  let keyName = el.getAttribute('keyName')
-  let sData = shiftData.value.find(x => x.row == shiftRow && x.name === keyName)
-  arrShiftChg.forEach(x => {
-    sData.shifts[x] = drawType.value
-  })
-  arrEl.forEach(x => {
-    x.style.marginTop = "0rem"
-  })
-  
+  targetElements.startIndex = -1
+  targetElements.endIndex = -1
+  targetElements.editedElementIndex = []
+})
+function onMouseDown(event: MouseEvent) {
+  let el = event.target as HTMLElement
+  targetElements.name = el.getAttribute('keyName') as string
+  targetElements.row = parseInt(el.getAttribute('rowIndex') as string)
+  targetElements.startIndex = parseInt(el.getAttribute('shiftindex') as string)
+  targetElements.endIndex = -1
+  targetElements.editedElementIndex.push(parseInt(el.getAttribute('shiftindex') as string))
+}
+function onMouseEnter(event: MouseEvent) {
+  if (targetElements.startIndex != -1) {
+    let el = event.target as HTMLElement
+    let elIndex = parseInt(el.getAttribute('shiftindex') as string)
+    let elStartIndex = elIndex > targetElements.startIndex ? targetElements.startIndex : elIndex
+    let elEndIndex = elIndex > targetElements.startIndex ? elIndex : targetElements.startIndex
+    targetElements.editedElementIndex = []
+    while (elStartIndex <= elEndIndex) {
+      targetElements.editedElementIndex.push(elStartIndex)
+      elStartIndex += 1
+    }
+  }
 }
 </script>
 
@@ -131,8 +133,7 @@ function onMouseUp(event:MouseEvent) {
           }"
         >
           <template #body="slotProps">
-            <span
-            >{{ slotProps.data.name }}</span>
+            <span>{{ slotProps.data.name }}</span>
             <!-- <br>
             <span>{{ slotProps.data.age }}</span>
             <br>
@@ -158,46 +159,34 @@ function onMouseUp(event:MouseEvent) {
               :class="[
                 'border-solid border-1 border-y-none border-primary-100 flex-1',
                 {
-                  'bg-yellow-100' : slotProps.data.row >= 2,
-                  'bg-blue-100' : slotProps.data.row === 1,
-                  'bg-pink-100': shift === 1,
-                  'bg-gray-100': shift === 2,
+                  'bg-yellow-100': slotProps.data.row >= 2,
+                  'bg-blue-100': slotProps.data.row === 1,
+                  'bg-pink-600': shift === shiftTypeValue.work,
+                  'bg-gray-600': shift === shiftTypeValue.rest,
+                  'bg-red-600':
+                    targetElements.editedElementIndex.indexOf(index) > -1 &&
+                    targetElements.name === slotProps.data.name &&
+                    targetElements.row === slotProps.data.row
                 }
               ]"
-                @mousedown.stop.prevent ="onMouseDown"
-                @mousemove.stop.prevent="onMouseMove"
-                @mouseup.stop.prevent="onMouseUp"
-            
+              @mousedown.stop.prevent="onMouseDown"
+              @mouseenter.stop.prevent="onMouseEnter"
             >
-              <!-- {{ shift.toString() }} -->
             </div>
           </template>
         </Column>
       </DataTable>
     </template>
     <template #footer>
-        <div>
-    <button class="h-3rem w-3rem m-3" @click="() => drawType = 1">1</button>
-    <button class="h-3rem w-3rem m-3" @click="() => drawType = 2">2</button>
-    <button class="h-3rem w-3rem m-3" @click="() => drawType = 0">0</button>
-    <button class="h-3rem w-3rem m-3" @click="() => {
-        shiftData.push(
-            {
-                name: 'lulv',
-                age: 26,
-                city: 'changshu',
-                shifts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                showflg:true,
-                row: 3
-            }
-        )
-    }">add data</button>
-    <button class="h-3rem w-3rem m-3" @click="() => {
-        let sData = shiftData.value.find(x => x.row == 3 && x.name === 'lulv')
-        let index = shiftData.indexOf(sData)
-        shiftData.splice()
-    }">del data</button>
-  </div>
+      <div>
+        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.work)">勤務</button>
+        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.rest)">休憩</button>
+        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.nothing)">削除</button>
+        <button class="h-3rem w-5rem m-3" @click="fncDoInsert">登録</button>
+        <button class="h-3rem w-5rem m-3" @click="fncAddRow">add data</button>
+        <button class="h-3rem w-5rem m-3" @click="fncDeleteRow">del data</button>
+        <button class="h-3rem w-5rem m-3" @click="fncChangeRow">chg data</button>
+      </div>
     </template>
   </Card>
 </template>
