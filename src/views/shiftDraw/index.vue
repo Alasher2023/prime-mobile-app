@@ -1,8 +1,11 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
 import { ref, onMounted, watch, reactive } from 'vue'
 import Card from 'primevue/card'
 import DataTable from 'primevue/datatable'
 import Column from 'primevue/column'
+import Toolbar from 'primevue/toolbar'
+import SelectButton from 'primevue/selectbutton';
 
 import { shiftTypeValue, type targetElementsObject } from './index'
 import cData from './data'
@@ -10,7 +13,7 @@ import cData from './data'
 const shiftData = ref()
 
 onMounted(() => {
-  shiftData.value = cData
+  shiftData.value = structuredClone(cData)
   document.addEventListener('mouseup', () => {
     if (targetElements.startIndex != -1) {
       targetElements.endIndex =
@@ -32,7 +35,7 @@ const fncAddRow = () => {
 
 const fncDeleteRow = () => {
   let row = shiftData.value.find(
-    (x: { row: number; name: string }) => x.row == 3 && x.name === 'lulv'
+    (x: { row: number; name: string }) => x.row == 2 && x.name === 'lulv'
   )
   if (row === undefined) return false
   let index = shiftData.value.indexOf(row)
@@ -50,23 +53,44 @@ const fncChangeRow = () => {
   }
 }
 
-const fncDoInsert = () => {
-  let chgArray = shiftData.value.flatMap((el) => {
-    let oriRow = cData.find(x => x.name === el.name && x.row === el.row)
-    if(oriRow === undefined){
-      return el
-    }else{
-      // for(k = 0;k <= oriRow.shifts.length; k++){
-      //   if(oriRow.shifts[i] != el.shift[i]){
-      //     return el
-      //   }
-      // }
-    }
-  })
-  console.log(chgArray)
-}
+const fncDoRegister = () => {
+  //Insert
+  let objInsert = shiftData.value.filter(
+    (el: { row: number; name: string }) =>
+      cData.findIndex(
+        (x: { name: string; row: number }) => x.name === el.name && x.row == el.row
+      ) === -1
+  )
+  // console.log(objInsert)
+  //Delete
+  let objDelete = cData.filter(
+    (el: { row: number; name: string }) =>
+      shiftData.value.findIndex(
+        (x: { name: string; row: number }) => x.name === el.name && x.row == el.row
+      ) === -1
+  )
+  // console.log(objDelete)
+  //upData
+  let objUpdata = shiftData.value.filter(
+    (el: { name: string; row: number; shifts: any }) =>
+      cData.findIndex(
+        (x) =>
+          x.name === el.name &&
+          x.row === el.row &&
+          JSON.stringify(x.shifts) !== JSON.stringify(el.shifts)
+      ) > -1
+  )
+  // console.log(objUpdata)
 
-const drawType = ref(0)
+  let msg = `Insert: ${objInsert.length},\n Delete: ${objDelete.length},\n Updata: ${objUpdata.length}`
+  alert(msg)
+}
+const drawType = ref()
+const drawTypeOptions = ref([
+  { label: '空闲', value: shiftTypeValue.nothing },
+  { label: '工作', value: shiftTypeValue.work },
+  { label: '休息', value: shiftTypeValue.rest },
+])
 
 const targetElements = reactive<targetElementsObject>({
   name: '',
@@ -83,7 +107,7 @@ watch(targetElements, () => {
       x.row == targetElements.row && x.name === targetElements.name
   )
   for (const i of targetElements.editedElementIndex) {
-    oriData.shifts[i] = drawType.value
+    oriData.shifts[i] = drawType.value.value
   }
   targetElements.startIndex = -1
   targetElements.endIndex = -1
@@ -114,6 +138,15 @@ function onMouseEnter(event: MouseEvent) {
 
 <template>
   <Card>
+    <template #header>
+      <Toolbar>
+        <template #start></template>
+        <template #center>
+          <SelectButton v-model="drawType" :options="drawTypeOptions" optionLabel="label" aria-labelledby="basic" />
+        </template>
+        <template #end></template>
+      </Toolbar>
+    </template>
     <template #content>
       <DataTable
         :value="shiftData"
@@ -171,18 +204,14 @@ function onMouseEnter(event: MouseEvent) {
               ]"
               @mousedown.stop.prevent="onMouseDown"
               @mouseenter.stop.prevent="onMouseEnter"
-            >
-            </div>
+            ></div>
           </template>
         </Column>
       </DataTable>
     </template>
     <template #footer>
       <div>
-        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.work)">勤務</button>
-        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.rest)">休憩</button>
-        <button class="h-3rem w-5rem m-3" @click="() => (drawType = shiftTypeValue.nothing)">削除</button>
-        <button class="h-3rem w-5rem m-3" @click="fncDoInsert">登録</button>
+        <button class="h-3rem w-5rem m-3" @click="fncDoRegister">登録</button>
         <button class="h-3rem w-5rem m-3" @click="fncAddRow">add data</button>
         <button class="h-3rem w-5rem m-3" @click="fncDeleteRow">del data</button>
         <button class="h-3rem w-5rem m-3" @click="fncChangeRow">chg data</button>
