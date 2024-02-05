@@ -5,7 +5,6 @@ import Card from 'primevue/card'
 import Button from 'primevue/button'
 import { reactive, ref } from 'vue'
 import * as Yup from 'yup'
-import router from '@/router'
 import apiClient from '@/Composables/request'
 
 interface LoginValuesInterface {

@@ -21,12 +21,12 @@ const SelectButtonOptions = ref(['日', '月'])
 // const calendarDateFormat = computed(() => SelectButtonValue.value == "月" ? "yy年mm月" : "yy年mm月dd日")
 const s_info = ref<searchInfoObject>()
 
-function formatDate(date : Date, sep="") {
-  const yyyy = date.getFullYear();
-  const mm = ('00' + (date.getMonth()+1)).slice(-2);
-  const dd = ('00' + date.getDate()).slice(-2);
+function formatDate(date: Date, sep = '') {
+  const yyyy = date.getFullYear()
+  const mm = ('00' + (date.getMonth() + 1)).slice(-2)
+  const dd = ('00' + date.getDate()).slice(-2)
 
-  return `${yyyy}${sep}${mm}${sep}${dd}`;
+  return `${yyyy}${sep}${mm}${sep}${dd}`
 }
 
 function fncAddDate(value: number) {
@@ -48,7 +48,7 @@ const setSearchValue = () => {
   }
 }
 
-watch(CalendarDate,() => {
+watch(CalendarDate, () => {
   setSearchValue()
 })
 
@@ -59,7 +59,6 @@ watch(SelectButtonValue, () => {
 onMounted(() => {
   setSearchValue()
 })
-
 </script>
 
 <template>

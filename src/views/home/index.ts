@@ -34,8 +34,7 @@ export type SalesInfoInterface = {
 }
 
 export type datatableObject = {
-  name: string,
-  qty: number,
-  price : number,
-    
+  name: string
+  qty: number
+  price: number
 }

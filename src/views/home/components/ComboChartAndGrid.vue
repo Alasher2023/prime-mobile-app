@@ -21,7 +21,7 @@ async function GetData() {
       chartDs1.value = []
       chartDs2.value = []
       chartLabels.value = []
-      if(res.data.length == 0) return
+      if (res.data.length == 0) return
       for (let i = 0; i <= 23; i++) {
         let key_amt = 'time' + i.toString() + '_amt'
         let key_guest = 'time' + i.toString() + '_guest'
@@ -86,18 +86,18 @@ const setChartOptions = () => {
     plugins: {
       legend: {
         labels: {
-          color: textColor,
-        },
+          color: textColor
+        }
       }
     },
     scales: {
       x: {
         ticks: {
           color: textColorSecondary,
-          autoSkip : false,
+          autoSkip: false,
           font: {
-            size : 9,
-            family : 'math'
+            size: 9,
+            family: 'math'
           }
         },
         grid: {
@@ -125,7 +125,7 @@ const setChartOptions = () => {
         grid: {
           color: surfaceBorder
         }
-      },
+      }
     }
   }
 }

@@ -13,7 +13,7 @@ async function getData() {
   GetDataShow(props.searchInfo as searchInfoObject).then((res) => {
     // let [SumDaily, OldSumDailyMonth, oldSumDailyYear, amtPlan] = res
     const formatter = new Intl.NumberFormat('ja-JP')
-    if(res.data.length != 0){
+    if (res.data.length != 0) {
       SalesInfo.value = {
         Sales: formatter.format(res.data[0]['g_amt_outtax']),
         TaxNormal: formatter.format(res.data[0]['tax1_g_amt_outtax']),
@@ -21,9 +21,7 @@ async function getData() {
         TupleNum: formatter.format(res.data[0]['chk_cnt']),
         TuplePrice: formatter.format(
           Math.ceil(
-            res.data[0]['chk_cnt'] == 0
-              ? 0
-              : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']
+            res.data[0]['chk_cnt'] == 0 ? 0 : res.data[0]['g_amt_outtax'] / res.data[0]['chk_cnt']
           )
         ),
         GuestNum: formatter.format(res.data[0]['guest_num']),
@@ -50,7 +48,7 @@ async function getData() {
         ).toFixed(1),
         YearRatiosPrice: formatter.format(res.data[0]['g_amt_outtax_year'])
       }
-    }else{
+    } else {
       SalesInfo.value = {
         Sales: 0,
         TaxNormal: 0,
@@ -73,7 +71,6 @@ async function getData() {
 watch(props, () => {
   getData()
 })
-
 </script>
 
 <template>

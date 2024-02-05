@@ -13,37 +13,39 @@ const props = defineProps({
   searchInfo: { type: Object as () => searchInfoObject, requied: true }
 })
 
-
 /**
  *  Datatable
  * */
 const gridData = ref<Array<tableDataInterface>>()
 const gridHeader = ref<string>('')
-function getTableData(dept_cd:number) {
-  GetDataTableDepartmentalTable(props.searchInfo as searchInfoObject,dept_cd)
-  .then(res => {
-    gridData.value = []
-    res.data.forEach((x: { key: { menU_NM: string; menU_CD: number }; g_qty: number; g_sum: number }) => {
-      let tempArr : tableDataInterface = new Object as tableDataInterface
-      tempArr.label = x.key.menU_NM
-      tempArr.value = x.key.menU_CD
-      tempArr.qty = x.g_qty
-      tempArr.total = x.g_sum
-      if(chartDs1.value && chartLabelsCD.value){
-        tempArr.percent = Intl.NumberFormat('ja', { style: 'percent'}).format(x.g_sum / Number.parseInt(chartDs1.value[chartLabelsCD.value.indexOf(dept_cd)].toString())) 
-      }else{
-        tempArr.percent = Intl.NumberFormat('ja', { style: 'percent'}).format(0)
-      }
-      
-      gridData.value?.push(tempArr)
+function getTableData(dept_cd: number) {
+  GetDataTableDepartmentalTable(props.searchInfo as searchInfoObject, dept_cd)
+    .then((res) => {
+      gridData.value = []
+      res.data.forEach(
+        (x: { key: { menU_NM: string; menU_CD: number }; g_qty: number; g_sum: number }) => {
+          let tempArr: tableDataInterface = new Object() as tableDataInterface
+          tempArr.label = x.key.menU_NM
+          tempArr.value = x.key.menU_CD
+          tempArr.qty = x.g_qty
+          tempArr.total = x.g_sum
+          if (chartDs1.value && chartLabelsCD.value) {
+            tempArr.percent = Intl.NumberFormat('ja', { style: 'percent' }).format(
+              x.g_sum /
+                Number.parseInt(chartDs1.value[chartLabelsCD.value.indexOf(dept_cd)].toString())
+            )
+          } else {
+            tempArr.percent = Intl.NumberFormat('ja', { style: 'percent' }).format(0)
+          }
+
+          gridData.value?.push(tempArr)
+        }
+      )
     })
-  })
-  .catch(err => {
-    console.log(err)
-  })
-
+    .catch((err) => {
+      console.log(err)
+    })
 }
-
 
 /**
  *  Chart
@@ -54,7 +56,7 @@ const chartLabelsCD = ref<Array<Object>>()
 const chartLabels = ref<Array<Object>>()
 const chartDs1 = ref<Array<Object>>()
 
-  function getData() {
+function getData() {
   GetDataTableDepartmental(props.searchInfo as searchInfoObject)
     .then((res) => {
       chartLabelsCD.value = []
@@ -72,11 +74,11 @@ const chartDs1 = ref<Array<Object>>()
       chartOptions.value = setChartOptions()
     })
     .then(() => {
-      if(chartLabelsCD.value && chartLabels.value){
-        if(chartLabelsCD.value.length == 0){
+      if (chartLabelsCD.value && chartLabels.value) {
+        if (chartLabelsCD.value.length == 0) {
           gridHeader.value = ''
           gridData.value = []
-        }else{
+        } else {
           gridHeader.value = chartLabels.value[0].toString()
           getTableData(chartLabelsCD.value[0] as number)
         }
@@ -126,8 +128,8 @@ const setChartOptions = () => {
           textAlign: 'left'
         },
         position: 'right',
-        onClick : (sender :any,eventArgs :any) => {
-          if(chartLabels.value && chartLabelsCD.value){
+        onClick: (sender: any, eventArgs: any) => {
+          if (chartLabels.value && chartLabelsCD.value) {
             getTableData(chartLabelsCD.value[chartLabels.value.indexOf(eventArgs.text)] as number)
             gridHeader.value = eventArgs.text
           }
